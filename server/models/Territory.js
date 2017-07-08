@@ -30,6 +30,13 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     tableName: 'Territory',
-    timestamps:false
+    timestamps:false,
+    getterMethods: {
+      getArea: function(){
+        var modx = this.getDataValue("endx") - this.getDataValue("startx");
+        var mody = this.getDataValue("endy") - this.getDataValue("starty");
+        return modx * mody;
+      }
+    }
   });
 };
