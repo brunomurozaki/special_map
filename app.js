@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 // Routes requires
 var index = require('./routes/index');
 var territories = require('./routes/territories');
+var squares = require('./routes/squares');
 
 var app = express();
 
@@ -15,6 +16,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/territories', territories);
+app.use('/squares', squares);
 
 // error handler
 app.use(function(err, req, res, next) {
