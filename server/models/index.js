@@ -33,4 +33,8 @@ Object.keys(db).forEach(function(modelName) {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
+db.Squares.belongsTo(db.Squares, {
+  foreignKey: 'idTerritory', sourceKey: 'idTerritory'
+});
+
 module.exports = db;

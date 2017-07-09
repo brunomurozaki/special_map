@@ -1,6 +1,6 @@
 /* jshint indent: 2 */
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('Squares', {
+  var Squares = sequelize.define('Squares', {
     x: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -23,4 +23,13 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'Squares',
     timestamps: false
   });
+
+  Squares.associate = function(models){
+    Squares.belongsTo(models.Squares, {
+      foreignKey: 'idTerritory',
+      as: 'squares'
+    });
+  } 
+
+  return Squares;
 };

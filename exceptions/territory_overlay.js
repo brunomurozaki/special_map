@@ -1,6 +1,8 @@
-/**/
+/*
+	Erro lançado caso haja um overlay sobre algum territorio anterior
+*/
 
-module.exports = function IncompleteData(message, extra) {
+module.exports = function TerritoryOverlay(message, extra) {
   Error.captureStackTrace(this, this.constructor);
   this.name = this.constructor.name;
   this.message = message;

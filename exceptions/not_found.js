@@ -1,6 +1,8 @@
-/**/
+/*
+	Erro lançado quando algum recurso nao foi encontrado
+*/
 
-module.exports = function IncompleteData(message, extra) {
+module.exports = function NotFound(message, extra) {
   Error.captureStackTrace(this, this.constructor);
   this.name = this.constructor.name;
   this.message = message;

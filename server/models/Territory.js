@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('Territory', {
+  var Territory = sequelize.define('Territory', {
     idTerritory: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -39,4 +39,14 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   });
+
+  Territory.associate = function(models){
+    console.log("associate");
+    Territory.hasMany(models.Squares, {
+      foreignKey: 'idTerritory',
+      as: 'squares'
+    });
+  }
+
+  return Territory;
 };

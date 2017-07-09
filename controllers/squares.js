@@ -42,10 +42,10 @@ function findTerritory(x, y, res){
   	return Territory.findOne({
 		where: { 
 			$and: [
-				{startx: { $lt: x }},
-				{starty: { $lt: y }},
-				{endx: { $gt: x }},
-				{endy: { $gt: y }},
+				{startx: { $lte: x }},
+				{starty: { $lte: y }},
+				{endx: { $gte: x }},
+				{endy: { $gte: y }},
 			]
 		}
 	})
@@ -54,6 +54,10 @@ function findTerritory(x, y, res){
 }
 
 function createSquare(territory, x, y, res){
+	if(territory == null){
+		return;
+	}
+
 	return Squares
       .create({
       	idTerritory: territory.idTerritory,
@@ -64,6 +68,7 @@ function createSquare(territory, x, y, res){
       .catch(error => res.status(400).send(error));
 }
 
-function errorHandle(data, x, y, res){
+function errorHandle(error, x, y, res){
+	console.log(error);
 	res.status(400).send(error)
 }
