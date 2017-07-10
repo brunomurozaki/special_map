@@ -156,9 +156,12 @@ function formatListResponse(territory, data){
 
 function formatCreateResponse(territory){
 	return { 
-      	name: territory.name,
-      	start: { x: territory.startx, y: territory.starty },
-      	end: { x: territory.endx, y: territory.endy }
+		data: {
+			name: territory.name,
+	      	start: { x: territory.startx, y: territory.starty },
+	      	end: { x: territory.endx, y: territory.endy }	
+		},
+      	error: false
     }
 }
 
@@ -196,7 +199,6 @@ function tryInsertTerritory(data, res){
 
 function insertTerritory(tdata, data, res){
 	if(tdata == null){
-		console.log("free to go");
 		return Territory
 	      .create({
 	        name: data.name,

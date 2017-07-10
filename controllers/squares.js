@@ -1,6 +1,7 @@
 const Territory = require('../server/models').Territory;
 const Squares = require('../server/models').Squares;
 const IncompleteData = require('../exceptions/incomplete_data');
+const NotFound = require('../exceptions/not_found');
 const ErrorLog = require('../server/log/LogError');
 
 module.exports = {
@@ -70,6 +71,8 @@ function findTerritory(x, y, res){
 
 function createSquare(territory, x, y, res){
 	if(territory == null){
+		var notFound = new NotFound("There is no Territory at this position", 0);
+		errorHandle(notFound, res);
 		return;
 	}
 
