@@ -1,6 +1,7 @@
 const Territory = require('../server/models').Territory;
 const Squares = require('../server/models').Squares;
 const IncompleteData = require('../exceptions/incomplete_data');
+const ErrorLog = require('../server/log/LogError');
 
 module.exports = {
   create(req, res) {
@@ -25,7 +26,7 @@ module.exports = {
   		}
   	})
   	.then(data => res.status(201).send(formatCreateResponse(data)))
-  	.catch(error => errorHandle(error, x, y, res))
+  	.catch(error => errorHandle(error, res))
   }
 };
 
@@ -64,7 +65,7 @@ function findTerritory(x, y, res){
 		}
 	})
 	.then(data => createSquare(data, x, y, res))
-	.catch(error => errorHandle(error, x, y, res));	
+	.catch(error => errorHandle(error, res));	
 }
 
 function createSquare(territory, x, y, res){
@@ -79,10 +80,11 @@ function createSquare(territory, x, y, res){
         y: y
       })
       .then(squares => res.status(201).send(formatCreateResponse(squares)))
-      .catch(error => res.status(400).send(error));
+      .catch(error => errorHandle(error, res));
 }
 
-function errorHandle(error, x, y, res){
+function errorHandle(error, res){
 	console.log(error);
+	ErrorLog(error);
 	res.status(400).send(error)
 }

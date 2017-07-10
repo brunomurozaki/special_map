@@ -3,6 +3,8 @@ const Squares = require('../server/models').Squares;
 const sequelize = require('../server/models').sequelize;
 const IncompleteData = require('../exceptions/incomplete_data');
 const TerritoryOverlay = require('../exceptions/territory_overlay');
+const NotFound = require('../exceptions/not_found');
+const ErrorLog = require('../server/log/LogError');
 
 module.exports = {
   create(req, res) {
@@ -19,16 +21,16 @@ module.exports = {
 	    .findById(req.params.id)
 	    .then(territory => {
 	      if (!territory) {
-	        return res.status(400).send({
-	          message: 'Territory Not Found',
-	        });
+	        var notFound = new NotFound("Territory was not found");
+			errorHandle(notFound, res);
+			return;
 	      }
 	      return territory
 	        .destroy()
 	        .then(() => res.status(204).send(formatDestroyResponse()))
-	        .catch(error => res.status(400).send(error));
+	        .catch(error => errorHandle(error, res));
 	    })
-	    .catch(error => res.status(400).send(error));
+	    .catch(error => errorHandle(error, res));
   }
 };
 
@@ -90,14 +92,14 @@ function getAllTerritoryData(data, res){
 	  	include: [{model: Squares, as: 'squares', attributes: ['x', 'y']}]
 	  })
 	  .then(territory => res.status(200).send(formatListResponse(territory, data)))
-	  .catch(error => res.status(400).send(error));
+	  .catch(error => errorHandle(error, res));
 }
 
 function getTerritoryData(territory, data, query, res){
 	if (!territory) {
-		return res.status(404).send({
-		  message: 'Territory Not Found',
-		});
+		var notFound = new NotFound("Territory was not found");
+		errorHandle(notFound, res);
+		return;
 	}
 
 	res.status(200).send(formatRetrieveResponse(territory, data, query));
@@ -206,18 +208,27 @@ function insertTerritory(tdata, data, res){
 	      .then(territory => res.status(201).send(formatCreateResponse(territory)))
 	      .catch(error => errorHandle(error, res));	
 	} else {
-		throw new TerritoryOverlay("Territory position is overlaying another territory", 0);
+		var territory_overlay = new TerritoryOverlay("Territory position is overlaying another territory", 0);
+		errorHandle(territory_overlay, res);
+		return;
+		//throw territory_overlay;
 	}
 }
 
 function errorHandle(error, res){
 	console.log(error);
+	ErrorLog(error);
 	res.status(400).send(error);
 }
 
 function prepareToInsertTerritory(data, res){
 	if(!data["name"] || !data["start"] || !data["end"])
-		throw new IncompleteData("Territory data is incomplete", 0);
+	{	
+		var incompleteData = new IncompleteData("Territory data is incomplete", 0);
+		errorHandle(incompleteData, res);
+		return;
+		//throw incompleteData;
+	}
 
 	return tryInsertTerritory(data, res);
 }

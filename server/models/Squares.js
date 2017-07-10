@@ -16,7 +16,8 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       references: {
         model: 'Territory',
-        key: 'idTerritory'
+        key: 'idTerritory',
+        onDelete: 'cascade'
       }
     }
   }, {
@@ -26,7 +27,8 @@ module.exports = function(sequelize, DataTypes) {
   Squares.associate = function(models){
     Squares.belongsTo(models.Squares, {
       foreignKey: 'idTerritory',
-      as: 'squares'
+      as: 'squares',
+      onDelete: 'cascade'
     });
   } 
 

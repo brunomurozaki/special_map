@@ -5,7 +5,7 @@
 module.exports = function TerritoryOverlay(message, extra) {
   Error.captureStackTrace(this, this.constructor);
   this.name = this.constructor.name;
-  this.message = message;
+  this.message = message + " - " + new Date();
   this.extra = extra;
 };
 

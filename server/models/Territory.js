@@ -44,7 +44,8 @@ module.exports = function(sequelize, DataTypes) {
     console.log("associate");
     Territory.hasMany(models.Squares, {
       foreignKey: 'idTerritory',
-      as: 'squares'
+      as: 'squares',
+      onDelete: 'cascade'
     });
   }
 
