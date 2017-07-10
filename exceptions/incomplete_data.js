@@ -1,4 +1,6 @@
-/**/
+/*
+	Erro lançado caso os dados de insercao de territorio sejam invalidos
+*/
 
 module.exports = function IncompleteData(message, extra) {
   Error.captureStackTrace(this, this.constructor);

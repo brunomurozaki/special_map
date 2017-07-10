@@ -9,6 +9,9 @@ module.exports = {
 
   	return findTerritory(x, y, res);
   },
+  list(req, res){
+  	return prepareToListSquares(req.query, res);
+  },
   retrieve(req, res) {
 	var paramX = req.params.x;
   	var paramY = req.params.y; 
@@ -25,6 +28,17 @@ module.exports = {
   	.catch(error => errorHandle(error, x, y, res))
   }
 };
+
+function prepareToListSquares(data, res){
+	if(data.createdorder && data.limit){
+		return Squares.findAll({
+			limit: parseInt(data.limit),
+			order: [["createdAt", data.createdorder]]
+		}).then(data => res.status(200).send(data));	
+	} else {
+		return Squares.findAll().then(data => res.status(200).send(data));	
+	}
+}
 
 
 function formatCreateResponse(data){

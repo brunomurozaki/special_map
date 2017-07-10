@@ -1,7 +1,56 @@
 <html>
 	<head>
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<script src="js/jquery-3.2.1.min.js"></script>
+		<script src="js/index.js"></script>
 	</head>
 	<body>
-		Hello tetse
+		<div class="wrapper">
+			<div class="header">
+				<h1>Squares Dashboard</h1>
+			</div> <!-- //header -->
+			<div class="contentWrapper">
+				<div class="contentTitle">
+					<h3>Data</h3>
+				</div><!-- //contentTitle -->
+				<div class="dashboardWrapper">
+					<div class="dashboard">
+						<div class="dashboardTitle">Most Painted Territories (Absolute)</div>
+						<div class="dashboarContent">
+							<select multiple id="absolute">
+							</select>
+						</div><!-- //dashboarContent -->
+					</div><!-- //dashboard -->
+					<div class="dashboard">
+						<div class="dashboardTitle">Most Painted Territories (Proportional)</div>
+						<div class="dashboarContent">
+							<select multiple id="proportional">
+							</select>
+						</div><!-- //dashboarContent -->
+					</div><!-- //dashboard -->
+					<div class="dashboard">
+						<div class="dashboardTitle">Last Painted Squares</div>
+						<div class="dashboarContent">
+							<select multiple id="paintedSquares">
+							</select>
+						</div><!-- //dashboarContent -->
+					</div><!-- //dashboard -->
+					<div class="dashboard">
+						<div class="dashboardTitle">Errors</div>
+						<div class="dashboarContent">
+							<select multiple id="errors">
+							</select>
+						</div><!-- //dashboarContent -->
+					</div><!-- //dashboard -->
+					<div class="dashboard">
+						<div class="dashboardTitle">Total Painted Area</div>
+						<div class="dashboarContent">
+							<select multiple id="total">
+							</select>
+						</div><!-- //dashboarContent -->
+					</div><!-- //dashboard -->
+				</div><!-- //dashboardWrapper -->
+			</div><!-- //contentWrapper -->
+		</div><!-- //wrapper -->
 	</body>
 </html>

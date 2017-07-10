@@ -20,8 +20,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   }, {
-    tableName: 'Squares',
-    timestamps: false
+    tableName: 'Squares'
   });
 
   Squares.associate = function(models){

@@ -1,5 +1,6 @@
 const Territory = require('../server/models').Territory;
 const Squares = require('../server/models').Squares;
+const sequelize = require('../server/models').sequelize;
 const IncompleteData = require('../exceptions/incomplete_data');
 const TerritoryOverlay = require('../exceptions/territory_overlay');
 
@@ -32,12 +33,21 @@ module.exports = {
 };
 
 function prepareToListTerritory(data, res){
-	return Territory
-	  .findAll({
-	  	include: [{model: Squares, as: 'squares', attributes: ['x', 'y']}]
-	  })
-	  .then(territory => res.status(200).send(formatListResponse(territory, data)))
-	  .catch(error => res.status(400).send(error));
+	var orderByAbsolute = data.absoluteorder;
+	var orderByProportional = data.proportionalorder;
+
+	if(orderByAbsolute)
+	{
+		return getAllTerritoryDataOrderedByAbsolute(data, orderByAbsolute, res)
+	} 
+	else if(orderByProportional)
+	{
+		return getAllTerritoryDataOrderedByProportional(data, orderByProportional, res)
+	}
+	else 
+	{
+		return getAllTerritoryData(data, res);
+	}
 }
 
 function prepareToRetrieveTerritory(data, query, res){
@@ -48,6 +58,39 @@ function prepareToRetrieveTerritory(data, query, res){
 	    })
 	    .then(territory => getTerritoryData(territory, data, query, res))
 	    .catch(error => errorHandle(error, res));
+}
+
+function getAllTerritoryDataOrderedByProportional(data, orderByPainted, res){
+	//Select t.name, (select COUNT(*)/((t.endx - t.startx) *  (t.endy - t.starty)) from Squares as s where s.idTerritory = t.idTerritory) as prop from Territory as t order by prop DESC
+	return Territory.findAll({
+  		attributes: [
+  			"name",
+  			[sequelize.literal("(select COUNT(*)/((Territory.endx - Territory.startx) *  (Territory.endy - Territory.starty)) from Squares as s where s.idTerritory = Territory.idTerritory)"), 'prop']
+  		],
+  		order: [[sequelize.literal('prop'), orderByPainted]]
+  	})
+  	.then(data => res.status(200).send(data));
+}
+
+function getAllTerritoryDataOrderedByAbsolute(data, orderByPainted, res){
+	//Select t.name, (select COUNT(*) from Squares as s where s.idTerritory = t.idTerritory) as counter from Territory as t order by counter DESC
+  	return Territory.findAll({
+  		attributes: [
+  			"name",
+  			[sequelize.literal("(select COUNT(*) from Squares as s where s.idTerritory = Territory.idTerritory)"), 'counter']
+  		],
+  		order: [[sequelize.literal('counter'), orderByPainted]]
+  	})
+  	.then(data => res.status(200).send(data));
+}
+
+function getAllTerritoryData(data, res){
+	return Territory
+	  .findAll({
+	  	include: [{model: Squares, as: 'squares', attributes: ['x', 'y']}]
+	  })
+	  .then(territory => res.status(200).send(formatListResponse(territory, data)))
+	  .catch(error => res.status(400).send(error));
 }
 
 function getTerritoryData(territory, data, query, res){
@@ -73,7 +116,7 @@ function formatRetrieveResponse(territory, data, query){
 	};
 
 	if(withSquares)
-		obj.squares = territory.squares;
+		obj.painted_squares = territory.squares;
 
 	return obj
 }
@@ -100,7 +143,7 @@ function formatListResponse(territory, data){
 		}
 
 		if(withSquares)
-			retData[i].squares = territory[i].squares;
+			retData[i].painted_squares = territory[i].squares;
 	}
 
 	return {

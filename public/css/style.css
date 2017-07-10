@@ -1,0 +1,7 @@
+.header{height: 20%; clear: both; border-bottom: #000 solid 1px}
+.contentWrapper{height: 80%; clear: both; margin: 0 auto}
+.contentTitle{}
+
+.dashboard{width: 25%; margin: 0 8%; border: #000 solid 1px; border-radius: 25px; display: inline-block; text-align: center}
+.dashboardTitle{border-bottom: #000 solid 1px}
+select{margin-bottom: 10px}
