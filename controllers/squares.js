@@ -4,32 +4,53 @@ const IncompleteData = require('../exceptions/incomplete_data');
 const NotFound = require('../exceptions/not_found');
 const ErrorLog = require('../server/log/LogError');
 
+
 module.exports = {
   create(req, res) {
-  	var x = req.params.x;
-  	var y = req.params.y; 
-
-  	return findTerritory(x, y, res);
+  	return prepareToCreateSquare(req.params, res);
   },
   list(req, res){
   	return prepareToListSquares(req.query, res);
   },
   retrieve(req, res) {
-	var paramX = req.params.x;
-  	var paramY = req.params.y; 
+  	return prepareToRetrieveSquare(req.params, res);
+  }
+};
 
-  	return Squares.findOne({
+function prepareToRetrieveSquare(params, res){
+	return Territory.findOne({
+		where: { 
+			$and: [
+				{startx: { $lte: params.x }},
+				{starty: { $lte: params.y }},
+				{endx: { $gte: params.x }},
+				{endy: { $gte: params.y }},
+			]
+		}
+	})
+	.then(data => retrieveSquare(data, params, res))
+	.catch(error => errorHandle(error, res));
+}
+
+function retrieveSquare(territory, params, res){
+	if(!territory){
+		var notFound = new NotFound("There is no Territory at this position", 0);
+		errorHandle(notFound, res);
+		return;
+	}
+
+	return Squares.findOne({
   		where: {
   			$and: [
-  				{x: paramX},
-  				{Y: paramY}
+  				{x: params.x},
+  				{Y: params.y}
   			]
   		}
   	})
-  	.then(data => res.status(201).send(formatCreateResponse(data)))
+  	.then(data => res.status(201).send(formatCreateResponse(data, params)))
   	.catch(error => errorHandle(error, res))
-  }
-};
+
+} 
 
 function prepareToListSquares(data, res){
 	if(data.createdorder && data.limit){
@@ -42,34 +63,38 @@ function prepareToListSquares(data, res){
 	}
 }
 
+function formatCreateResponse(data, params){
+	var painted = false;
 
-function formatCreateResponse(data){
+	if(data)
+		painted = true;
+
 	return {
 		data: {
-			x: data.x,
-			y: data.y,
-			painted:true
+			x: params.x,
+			y: params.y,
+			painted:painted
 		},
 		error: false
 	};
 }
 
-function findTerritory(x, y, res){
+function prepareToCreateSquare(params, res){
   	return Territory.findOne({
 		where: { 
 			$and: [
-				{startx: { $lte: x }},
-				{starty: { $lte: y }},
-				{endx: { $gte: x }},
-				{endy: { $gte: y }},
+				{startx: { $lte: params.x }},
+				{starty: { $lte: params.y }},
+				{endx: { $gte: params.x }},
+				{endy: { $gte: params.y }},
 			]
 		}
 	})
-	.then(data => createSquare(data, x, y, res))
+	.then(data => createSquare(data, params, res))
 	.catch(error => errorHandle(error, res));	
 }
 
-function createSquare(territory, x, y, res){
+function createSquare(territory, params, res){
 	if(territory == null){
 		var notFound = new NotFound("There is no Territory at this position", 0);
 		errorHandle(notFound, res);
@@ -79,10 +104,10 @@ function createSquare(territory, x, y, res){
 	return Squares
       .create({
       	idTerritory: territory.idTerritory,
-        x: x,
-        y: y
+        x: params.x,
+        y: params.y
       })
-      .then(squares => res.status(201).send(formatCreateResponse(squares)))
+      .then(squares => res.status(201).send(formatCreateResponse(squares, params)))
       .catch(error => errorHandle(error, res));
 }
 
