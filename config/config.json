@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "dev",
+    "username": "root",
     "password": "sa",
-    "database": "easycooking",
-    "host": "52.183.99.134",
+    "database": "mydb",
+    "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
